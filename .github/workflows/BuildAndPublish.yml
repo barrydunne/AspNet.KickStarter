@@ -1,0 +1,68 @@
+# This workflow will build and publish the projects
+#
+# Rerequisites:
+#
+#   1) The NuGet API key stored as a repository secret named NUGET_KEY
+#      in Settings > Secrets and variables > Actions > Secrets
+#
+#   2) Workflow permissions set to read and write
+#      in Settings > Actions > General
+
+name: Build and Publish
+
+on:
+  workflow_dispatch:   # This makes the workflow manual
+    inputs:
+      version:
+        description: 'What is the package version'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-and-publish:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build
+      run: dotnet build -c Release .\AspNet.KickStarter.sln
+
+    - name: Pack AspNet.KickStarter
+      run: |
+        $version = '${{ github.event.inputs.version }}'
+        $project = 'AspNet.KickStarter\AspNet.KickStarter.csproj'
+        $description = "`"This simplifies the bootstrapping code to run a minimal API that with Serilog and Swagger.`""
+        $author = "`"Barry Dunne`""
+        $year = Get-Date -Format 'yyyy'
+        $copyright = "`"Copyright © Barry Dunne $year`""
+        Write-Host "Packing v$version of $project by $author $copyright description: $description"
+        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Authors=$author /p:Copyright=$copyright /p:Description=$description -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
+
+    - name: Pack AspNet.KickStarter
+      run: |
+        $version = '${{ github.event.inputs.version }}'
+        $project = 'AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj'
+        $description = "`"This is a basic library of interfaces to use for CQRS commands and queries with MediatR.`""
+        $author = "`"Barry Dunne`""
+        $year = Get-Date -Format 'yyyy'
+        $copyright = "`"Copyright © Barry Dunne $year`""
+        Write-Host "Packing v$version of $project by $author $copyright description: $description"
+        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Authors=$author /p:Copyright=$copyright /p:Description=$description -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
+
+    - name: Publish
+      run: dotnet nuget push "${{env.DOTNET_ROOT}}\Package\*.${{ github.event.inputs.version }}.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }}
+
+    - name: Tag version
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag ${{ github.event.inputs.version }}
+        git push origin ${{ github.event.inputs.version }}
