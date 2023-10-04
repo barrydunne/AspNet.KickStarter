@@ -49,7 +49,7 @@ jobs:
         Write-Host "Packing v$version of $project by $author $copyright description: $description"
         dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Authors=$author /p:Copyright=$copyright /p:Description=$description -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
 
-    - name: Pack AspNet.KickStarter
+    - name: Pack AspNet.KickStarter.CQRS.Abstractions
       run: |
         $version = '${{ github.event.inputs.version }}'
         $project = 'AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj'

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
+using Prometheus.HttpMetrics;
 using Serilog;
 
 namespace AspNet.KickStarter
@@ -15,6 +18,15 @@ namespace AspNet.KickStarter
         private bool _withSwagger;
         private bool _withSwaggerOnlyInDevelopment;
         private Action<WebApplicationBuilder>? _withServices;
+        private bool _withFluentValidation;
+        private Type? _fluentValidatorType;
+        private ServiceLifetime _fluentValidatorLifetime;
+        private Func<AssemblyScanner.AssemblyScanResult, bool>? _fluentValidatorFilter;
+        private bool _fluentValidatorIncludeInternalTypes;
+        private bool _withMetrics;
+        private ushort _metricsPort;
+        private Action<KestrelMetricServerOptions>? _metricsPortOptionsCallback;
+        private Action<HttpMiddlewareExporterOptions>? _metricsExporterOptions;
         private Action<WebApplicationBuilder>? _withAdditionalConfiguration;
         private Action<WebApplication>? _withEndpoints;
 
@@ -28,6 +40,14 @@ namespace AspNet.KickStarter
             _withSwagger = false;
             _withSwaggerOnlyInDevelopment = false;
             _withServices = null;
+            _fluentValidatorType = null;
+            _fluentValidatorLifetime = ServiceLifetime.Scoped;
+            _fluentValidatorFilter = null;
+            _fluentValidatorIncludeInternalTypes = true;
+            _withFluentValidation = false;
+            _withMetrics = false;
+            _metricsPortOptionsCallback = null;
+            _metricsExporterOptions = null;
             _withAdditionalConfiguration = null;
             _withEndpoints = null;
         }
@@ -36,7 +56,7 @@ namespace AspNet.KickStarter
         /// Use Serilog for logging in the API.
         /// </summary>
         /// <param name="debugOutput">An optional action to invoke with Serilog self-log messages.</param>
-        /// <returns>The current instance.</returns>
+        /// <returns>The current builder.</returns>
         public ApiBuilder WithSerilog(Action<string>? debugOutput = null)
         {
             _withSerilog = true;
@@ -48,7 +68,7 @@ namespace AspNet.KickStarter
         /// Enable Swagger/OpenApi in the API.
         /// </summary>
         /// <param name="onlyInDevelopment">Whether to only include swagger page when running in development mode.</param>
-        /// <returns>The current instance.</returns>
+        /// <returns>The current builder.</returns>
         public ApiBuilder WithSwagger(bool onlyInDevelopment = false)
         {
             _withSwagger = true;
@@ -60,7 +80,7 @@ namespace AspNet.KickStarter
         /// Provide the action that will register the services for the API.
         /// </summary>
         /// <param name="registerServices">The action that will register the services for the API.</param>
-        /// <returns>The current instance.</returns>
+        /// <returns>The current builder.</returns>
         public ApiBuilder WithServices(Action<WebApplicationBuilder> registerServices)
         {
             _withServices = registerServices;
@@ -68,10 +88,44 @@ namespace AspNet.KickStarter
         }
 
         /// <summary>
+        /// Automatically register all validators in a specific assembly.
+        /// </summary>
+        /// <typeparam name="TValidator">A validator that is from the assembly to scan.</typeparam>
+        /// <param name="lifetime">The lifetime of the validators. The default is scoped (per-request in web applications).</param>
+        /// <param name="filter">Optional filter that allows certain types to be skipped from registration.</param>
+        /// <param name="includeInternalTypes">Include internal validators. The default is false.</param>
+        /// <returns>The current builder.</returns>
+        public ApiBuilder WithFluentValidationFromAssemblyContaining<TValidator>(ServiceLifetime lifetime = ServiceLifetime.Scoped, Func<AssemblyScanner.AssemblyScanResult, bool>? filter = null, bool includeInternalTypes = true)
+        {
+            _withFluentValidation = true;
+            _fluentValidatorType = typeof(TValidator);
+            _fluentValidatorLifetime = lifetime;
+            _fluentValidatorFilter = filter;
+            _fluentValidatorIncludeInternalTypes = includeInternalTypes;
+            return this;
+        }
+
+        /// <summary>
+        /// Run a Prometheus metrics exporter on a separate port.
+        /// </summary>
+        /// <param name="metricsPort">The port the metrics HTTP listener should use. The default is 8081.</param>
+        /// <param name="listenerOptionsCallback">The optional action for additional metrics HTTP listener configuration.</param>
+        /// <param name="metricsExporterOptions">The optional action for additional metrics export configuration.</param>
+        /// <returns>The current builder.</returns>
+        public ApiBuilder WithMetrics(ushort metricsPort = 8081, Action<KestrelMetricServerOptions>? listenerOptionsCallback = null, Action<HttpMiddlewareExporterOptions>? metricsExporterOptions = null)
+        {
+            _withMetrics = true;
+            _metricsPort = metricsPort;
+            _metricsPortOptionsCallback = listenerOptionsCallback;
+            _metricsExporterOptions = metricsExporterOptions;
+            return this;
+        }
+
+        /// <summary>
         /// Provide the action that will perform custom configuration for the API.
         /// </summary>
         /// <param name="additionalConfiguration">The action that will perform custom configuration for the API.</param>
-        /// <returns>The current instance.</returns>
+        /// <returns>The current builder.</returns>
         public ApiBuilder WithAdditionalConfiguration(Action<WebApplicationBuilder> additionalConfiguration)
         {
             _withAdditionalConfiguration = additionalConfiguration;
@@ -82,7 +136,7 @@ namespace AspNet.KickStarter
         /// Provide the action that will map the endpoints for the API.
         /// </summary>
         /// <param name="mapEndpoints">The action that will map the endpoints for the API.</param>
-        /// <returns>The current instance.</returns>
+        /// <returns>The current builder.</returns>
         public ApiBuilder WithEndpoints(Action<WebApplication> mapEndpoints)
         {
             _withEndpoints = mapEndpoints;
@@ -93,7 +147,7 @@ namespace AspNet.KickStarter
         /// Builds the <see cref="WebApplication"/>.
         /// </summary>
         /// <param name="args">The command line arguments.</param>
-        /// <returns>The configured <see cref="WebApplication"/>.</returns>
+        /// <returns>The configured <see cref="WebApplication"/> ready to run.</returns>
         public WebApplication Build(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -112,6 +166,19 @@ namespace AspNet.KickStarter
             }
 
             _withServices?.Invoke(builder);
+
+            if (_withFluentValidation)
+                builder.Services.AddValidatorsFromAssemblyContaining(_fluentValidatorType, _fluentValidatorLifetime, _fluentValidatorFilter, _fluentValidatorIncludeInternalTypes);
+
+            if (_withMetrics)
+            {
+                builder.Services.AddMetricServer(options =>
+                {
+                    options.Port = _metricsPort;
+                    _metricsPortOptionsCallback?.Invoke(options);
+                });
+            }
+
             _withAdditionalConfiguration?.Invoke(builder);
 
             var app = builder.Build();
@@ -125,6 +192,14 @@ namespace AspNet.KickStarter
             }
 
             _withEndpoints?.Invoke(app);
+
+            if (_withMetrics)
+            {
+                if (_metricsExporterOptions is null)
+                    app.UseHttpMetrics();
+                else
+                    app.UseHttpMetrics(_metricsExporterOptions);
+            }
 
             return app;
         }
