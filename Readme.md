@@ -10,6 +10,10 @@ This library provides the following helpers
 
 This simplifies the bootstrapping code to run a minimal API that with Serilog and Swagger.
 
+### HealthHandler
+
+Provides basic health checks - status and version.
+
 ### IEndpointRouteBuilder Extensions
 
 These extensions simply consolidate the AspNet extensions
@@ -29,6 +33,8 @@ MapXXX(route, name, description, handler)
 
  ```
 using AspNet.KickStarter;
+using AspNet.KickStarter.HttpHandlers;
+using System.IO.Abstractions;
 
 new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
@@ -39,10 +45,14 @@ new ApiBuilder()
     .Run();
 
 void RegisterServices(WebApplicationBuilder builder)
-    => builder.Services.AddTransient<HealthHandler>();
+    => builder.Services
+        .AddTransient<HealthHandler>()
+        .AddSingleton<IFileSystem, FileSystem>();
 
 void MapEndpointsp(WebApplication app)
 {
+    app.MapGet("/health/status", "GetHealthStatus", "Check API health",
+        (HealthHandler handler) => handler.GetStatus());
     app.MapGet("/health/version", "GetVersion", "Get the API version",
         async (HealthHandler handler) => await handler.GetVersionAsync());
 }
