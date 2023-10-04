@@ -1,0 +1,8 @@
+@AspNet.KickStarter.Demo_HostAddress = http://localhost:5195
+
+GET {{AspNet.KickStarter.Demo_HostAddress}}/health/status
+
+###
+GET {{AspNet.KickStarter.Demo_HostAddress}}/health/version
+
+###

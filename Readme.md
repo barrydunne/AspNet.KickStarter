@@ -12,7 +12,7 @@ This simplifies the bootstrapping code to run a minimal API that with Serilog an
 
 ### IEndpointRouteBuilder Extensions
 
-These extensions simply consolidates the AspNet extensions
+These extensions simply consolidate the AspNet extensions
 ```
 app.MapXXX(route, handler)
    .WithName(name)
@@ -48,7 +48,7 @@ void MapEndpointsp(WebApplication app)
 }
 ```
 
-This will use the Serilog configuration in `appsettings.json`.
+This will use the Serilog configuration in `appsettings.json`. For example:
 
 *appsettings.json*
 

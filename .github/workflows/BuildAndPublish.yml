@@ -35,6 +35,9 @@ jobs:
     - name: Build
       run: dotnet build -c Release .\AspNet.KickStarter.sln
 
+    - name: Test net8
+      run: dotnet test .\AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj -c Release --framework net8.0 -l "console;verbosity=normal" -l "trx;logfilename=Net8TestResults.trx"
+
     - name: Pack AspNet.KickStarter
       run: |
         $version = '${{ github.event.inputs.version }}'
