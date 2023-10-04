@@ -15,6 +15,7 @@ namespace AspNet.KickStarter
         private bool _withSwagger;
         private bool _withSwaggerOnlyInDevelopment;
         private Action<WebApplicationBuilder>? _withServices;
+        private Action<WebApplicationBuilder>? _withAdditionalConfiguration;
         private Action<WebApplication>? _withEndpoints;
 
         /// <summary>
@@ -27,6 +28,7 @@ namespace AspNet.KickStarter
             _withSwagger = false;
             _withSwaggerOnlyInDevelopment = false;
             _withServices = null;
+            _withAdditionalConfiguration = null;
             _withEndpoints = null;
         }
 
@@ -66,6 +68,17 @@ namespace AspNet.KickStarter
         }
 
         /// <summary>
+        /// Provide the action that will perform custom configuration for the API.
+        /// </summary>
+        /// <param name="additionalConfiguration">The action that will perform custom configuration for the API.</param>
+        /// <returns>The current instance.</returns>
+        public ApiBuilder WithAdditionalConfiguration(Action<WebApplicationBuilder> additionalConfiguration)
+        {
+            _withAdditionalConfiguration = additionalConfiguration;
+            return this;
+        }
+
+        /// <summary>
         /// Provide the action that will map the endpoints for the API.
         /// </summary>
         /// <param name="mapEndpoints">The action that will map the endpoints for the API.</param>
@@ -99,6 +112,7 @@ namespace AspNet.KickStarter
             }
 
             _withServices?.Invoke(builder);
+            _withAdditionalConfiguration?.Invoke(builder);
 
             var app = builder.Build();
 

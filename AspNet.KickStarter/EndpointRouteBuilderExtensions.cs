@@ -37,6 +37,20 @@ namespace AspNet.KickStarter
             => endpoints.MapDelete(pattern, handler).WithName(name).WithDescription(description).WithOpenApi();
 
         /// <summary>
+        /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP DELETE requests
+        /// for the specified pattern.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response from this endpoint.</typeparam>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> to add the route to.</param>
+        /// <param name="pattern">The route pattern.</param>
+        /// <param name="name">The endpoint name.</param>
+        /// <param name="description">A string representing a detailed description of the endpoint.</param>
+        /// <param name="handler">The delegate executed when the endpoint is matched.</param>
+        /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+        public static RouteHandlerBuilder MapDelete<TResponse>(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
+            => endpoints.MapDelete(pattern, handler).WithName(name).WithDescription(description).WithOpenApi().Produces<TResponse>();
+
+        /// <summary>
         /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP GET requests
         /// for the specified pattern.
         /// </summary>
@@ -61,6 +75,20 @@ namespace AspNet.KickStarter
         /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
         public static RouteHandlerBuilder MapGet(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
             => endpoints.MapGet(pattern, handler).WithName(name).WithDescription(description).WithOpenApi();
+
+        /// <summary>
+        /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP GET requests
+        /// for the specified pattern.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response from this endpoint.</typeparam>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> to add the route to.</param>
+        /// <param name="pattern">The route pattern.</param>
+        /// <param name="name">The endpoint name.</param>
+        /// <param name="description">A string representing a detailed description of the endpoint.</param>
+        /// <param name="handler">The delegate executed when the endpoint is matched.</param>
+        /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+        public static RouteHandlerBuilder MapGet<TResponse>(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
+            => endpoints.MapGet(pattern, handler).WithName(name).WithDescription(description).WithOpenApi().Produces<TResponse>();
 
         /// <summary>
         /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP PATCH requests
@@ -89,6 +117,20 @@ namespace AspNet.KickStarter
             => endpoints.MapPatch(pattern, handler).WithName(name).WithDescription(description).WithOpenApi();
 
         /// <summary>
+        /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP PATCH requests
+        /// for the specified pattern.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response from this endpoint.</typeparam>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> to add the route to.</param>
+        /// <param name="pattern">The route pattern.</param>
+        /// <param name="name">The endpoint name.</param>
+        /// <param name="description">A string representing a detailed description of the endpoint.</param>
+        /// <param name="handler">The <see cref="Delegate" /> executed when the endpoint is matched.</param>
+        /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+        public static RouteHandlerBuilder MapPatch<TResponse>(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
+            => endpoints.MapPatch(pattern, handler).WithName(name).WithDescription(description).WithOpenApi().Produces<TResponse>();
+
+        /// <summary>
         /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP POST requests
         /// for the specified pattern.
         /// </summary>
@@ -115,6 +157,20 @@ namespace AspNet.KickStarter
             => endpoints.MapPost(pattern, handler).WithName(name).WithDescription(description).WithOpenApi();
 
         /// <summary>
+        /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP POST requests
+        /// for the specified pattern.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response from this endpoint.</typeparam>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> to add the route to.</param>
+        /// <param name="pattern">The route pattern.</param>
+        /// <param name="name">The endpoint name.</param>
+        /// <param name="description">A string representing a detailed description of the endpoint.</param>
+        /// <param name="handler">The delegate executed when the endpoint is matched.</param>
+        /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+        public static RouteHandlerBuilder MapPost<TResponse>(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
+            => endpoints.MapPost(pattern, handler).WithName(name).WithDescription(description).WithOpenApi().Produces<TResponse>();
+
+        /// <summary>
         /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP PUT requests
         /// for the specified pattern.
         /// </summary>
@@ -139,5 +195,19 @@ namespace AspNet.KickStarter
         /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
         public static RouteHandlerBuilder MapPut(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
             => endpoints.MapPut(pattern, handler).WithName(name).WithDescription(description).WithOpenApi();
+
+        /// <summary>
+        /// Adds a <see cref="RouteEndpoint"/> to the <see cref="IEndpointRouteBuilder"/> that matches HTTP PUT requests
+        /// for the specified pattern.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response from this endpoint.</typeparam>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> to add the route to.</param>
+        /// <param name="pattern">The route pattern.</param>
+        /// <param name="name">The endpoint name.</param>
+        /// <param name="description">A string representing a detailed description of the endpoint.</param>
+        /// <param name="handler">The delegate executed when the endpoint is matched.</param>
+        /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+        public static RouteHandlerBuilder MapPut<TResponse>(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string pattern, string name, string description, Delegate handler)
+            => endpoints.MapPut(pattern, handler).WithName(name).WithDescription(description).WithOpenApi().Produces<TResponse>();
     }
 }
