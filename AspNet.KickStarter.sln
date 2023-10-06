@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter", "AspNe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS.Abstractions", "AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj", "{1615AB29-CB50-445D-825C-34918CBBE28A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.KickStarter.Demo", "AspNet.KickStarter.Demo\AspNet.KickStarter.Demo.csproj", "{55E0032A-E143-41FB-A7CE-D11C087EFFCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Demo", "AspNet.KickStarter.Demo\AspNet.KickStarter.Demo.csproj", "{55E0032A-E143-41FB-A7CE-D11C087EFFCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.KickStarter.Tests", "AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj", "{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Tests", "AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj", "{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

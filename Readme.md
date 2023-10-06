@@ -8,7 +8,7 @@ This library provides the following helpers
 
 ### ApiBuilder
 
-This simplifies the bootstrapping code to run a minimal API that with Serilog and Swagger.
+This simplifies the bootstrapping code to run a minimal API with optional support for Serilog, FluentValidation, Prometheus metrics and Swagger..
 
 ### HealthHandler
 
@@ -41,6 +41,8 @@ new ApiBuilder()
     .WithSwagger()
     .WithServices(RegisterServices)
     .WithEndpoints(MapEndpointsp)
+    .WithFluentValidationFromAssemblyContaining<MyRequestValidator>()
+    .WithMetrics(8081)
     .Build(args)
     .Run();
 
@@ -120,7 +122,7 @@ Along with handler interfaces
 ### Sample Usage
 
 ```
-public class GetVersionQuery : IQuery<string> { }
+public record GetVersionQuery : IQuery<string> { }
 
 internal class GetVersionQueryHandler : IQueryHandler<GetVersionQuery, string>
 {
@@ -128,11 +130,7 @@ internal class GetVersionQueryHandler : IQueryHandler<GetVersionQuery, string>
 }
 
 
-public class SetValueCommand : ICommand
-{
-    public string Value { get; }
-    public SetValueCommand(string value) => Value = value;
-}
+public record SetValueCommand(string Value) : ICommand;
 
 internal class SetValueCommandHandler : ICommandHandler<SetValueCommand>
 {

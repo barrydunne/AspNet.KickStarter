@@ -1,8 +1,12 @@
-@AspNet.KickStarter.Demo_HostAddress = http://localhost:5195
+@ApiAddress = http://localhost:5195
+@MetricsAddress = http://localhost:8081
 
-GET {{AspNet.KickStarter.Demo_HostAddress}}/health/status
+GET {{ApiAddress}}/health/status
 
 ###
-GET {{AspNet.KickStarter.Demo_HostAddress}}/health/version
+GET {{ApiAddress}}/health/version
+
+###
+GET {{MetricsAddress}}/metrics
 
 ###

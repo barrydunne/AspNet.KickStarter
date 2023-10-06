@@ -7,6 +7,7 @@ new ApiBuilder()
     .WithSwagger()
     .WithServices(RegisterServices)
     .WithEndpoints(MapEndpointsp)
+    .WithMetrics(8081)
     .Build(args)
     .Run();
 

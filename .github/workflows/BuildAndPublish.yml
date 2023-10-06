@@ -42,7 +42,7 @@ jobs:
       run: |
         $version = '${{ github.event.inputs.version }}'
         $project = 'AspNet.KickStarter\AspNet.KickStarter.csproj'
-        $description = "`"This simplifies the bootstrapping code to run a minimal API that with Serilog and Swagger.`""
+        $description = "`"This simplifies the bootstrapping code to run a minimal API with optional support for Serilog, FluentValidation, Prometheus metrics and Swagger.`""
         $author = "`"Barry Dunne`""
         $year = Get-Date -Format 'yyyy'
         $copyright = "`"Copyright © Barry Dunne $year`""
