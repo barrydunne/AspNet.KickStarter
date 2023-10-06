@@ -42,23 +42,19 @@ jobs:
       run: |
         $version = '${{ github.event.inputs.version }}'
         $project = 'AspNet.KickStarter\AspNet.KickStarter.csproj'
-        $description = "`"This simplifies the bootstrapping code to run a minimal API with optional support for Serilog, FluentValidation, Prometheus metrics and Swagger.`""
-        $author = "`"Barry Dunne`""
         $year = Get-Date -Format 'yyyy'
         $copyright = "`"Copyright © Barry Dunne $year`""
-        Write-Host "Packing v$version of $project by $author $copyright description: $description"
-        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Authors=$author /p:Copyright=$copyright /p:Description=$description -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
+        Write-Host "Packing v$version of $project"
+        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Copyright=$copyright -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
 
     - name: Pack AspNet.KickStarter.CQRS.Abstractions
       run: |
         $version = '${{ github.event.inputs.version }}'
         $project = 'AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj'
-        $description = "`"This is a basic library of interfaces to use for CQRS commands and queries with MediatR.`""
-        $author = "`"Barry Dunne`""
         $year = Get-Date -Format 'yyyy'
         $copyright = "`"Copyright © Barry Dunne $year`""
-        Write-Host "Packing v$version of $project by $author $copyright description: $description"
-        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Authors=$author /p:Copyright=$copyright /p:Description=$description -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
+        Write-Host "Packing v$version of $project"
+        dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Copyright=$copyright -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
 
     - name: Publish
       run: dotnet nuget push "${{env.DOTNET_ROOT}}\Package\*.${{ github.event.inputs.version }}.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }}
