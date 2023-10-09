@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Prometheus;
 using Prometheus.HttpMetrics;
 using Serilog;
@@ -16,6 +17,7 @@ namespace AspNet.KickStarter
         private bool _withSerilog;
         private Action<string>? _withSerilogDebugOutput;
         private bool _withSwagger;
+        private bool _withSwaggerBearerToken;
         private bool _withSwaggerOnlyInDevelopment;
         private Action<WebApplicationBuilder>? _withServices;
         private bool _withFluentValidation;
@@ -39,6 +41,7 @@ namespace AspNet.KickStarter
             _withSerilogDebugOutput = null;
             _withSwagger = false;
             _withSwaggerOnlyInDevelopment = false;
+            _withSwaggerBearerToken = false;
             _withServices = null;
             _fluentValidatorType = null;
             _fluentValidatorLifetime = ServiceLifetime.Scoped;
@@ -68,11 +71,13 @@ namespace AspNet.KickStarter
         /// Enable Swagger/OpenApi in the API.
         /// </summary>
         /// <param name="onlyInDevelopment">Whether to only include swagger page when running in development mode.</param>
+        /// <param name="useBearerToken">Whether to include Bearer token authorization.</param>
         /// <returns>The current builder.</returns>
-        public ApiBuilder WithSwagger(bool onlyInDevelopment = false)
+        public ApiBuilder WithSwagger(bool onlyInDevelopment = false, bool useBearerToken = false)
         {
             _withSwagger = true;
             _withSwaggerOnlyInDevelopment = onlyInDevelopment;
+            _withSwaggerBearerToken = useBearerToken;
             return this;
         }
 
@@ -162,7 +167,37 @@ namespace AspNet.KickStarter
             if (_withSwagger)
             {
                 builder.Services.AddEndpointsApiExplorer();
-                builder.Services.AddSwaggerGen();
+                builder.Services.AddSwaggerGen(_ =>
+                {
+                    if (_withSwaggerBearerToken)
+                    {
+                        var scheme = new OpenApiSecurityScheme
+                        {
+                            Name = "Authorization",
+                            Description = "Enter your access token below without the 'Bearer ' prefix.",
+                            In = ParameterLocation.Header,
+                            Type = SecuritySchemeType.Http, // Does not require the "Bearer " prefix to be used, unlike ApiKey.
+                            Scheme = "Bearer"
+                        };
+                        _.AddSecurityDefinition("Bearer", scheme);
+                        _.AddSecurityRequirement(new OpenApiSecurityRequirement
+                        {
+                            {
+                                new OpenApiSecurityScheme
+                                {
+                                    Name = "Bearer",
+                                    In = ParameterLocation.Header,
+                                    Reference = new OpenApiReference
+                                    {
+                                        Id = "Bearer",
+                                        Type = ReferenceType.SecurityScheme
+                                    }
+                                },
+                                Array.Empty<string>()
+                            }
+                        });
+                    }
+                });
             }
 
             _withServices?.Invoke(builder);
