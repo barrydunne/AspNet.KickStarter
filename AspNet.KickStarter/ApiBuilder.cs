@@ -14,6 +14,13 @@ namespace AspNet.KickStarter
     /// </summary>
     public class ApiBuilder
     {
+        // Unless defined otherwise by the client application, the histogram buckets will use a custom set of values.
+        // This is to override the Prometheus default histogram buckets which are Histogram.ExponentialBuckets(0.01, 2, 25)
+        // resulting in values 0.01, 0.02, 0.04, 0.08, 0.16, ... 83886.08, 167772.16
+        // Those default values are considered too high for millisecond timings which are assumed to be the normal metrics recorded by the applications that use this class.
+        // If custom values are required then they can be configured by passing a metricsMeterAdapterOptions action to WithMetrics().
+        private static readonly Action<MeterAdapterOptions> _metricsMeterAdapterDefaultOptions = (_) => _.ResolveHistogramBuckets = (_) => new[] { 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 };
+
         private bool _withSerilog;
         private Action<string>? _withSerilogDebugOutput;
         private bool _withSwagger;
@@ -29,6 +36,7 @@ namespace AspNet.KickStarter
         private ushort _metricsPort;
         private Action<KestrelMetricServerOptions>? _metricsPortOptionsCallback;
         private Action<HttpMiddlewareExporterOptions>? _metricsExporterOptions;
+        private Action<MeterAdapterOptions> _metricsMeterAdapterOptions;
         private Action<WebApplicationBuilder>? _withAdditionalConfiguration;
         private Action<WebApplication>? _withEndpoints;
 
@@ -51,6 +59,7 @@ namespace AspNet.KickStarter
             _withMetrics = false;
             _metricsPortOptionsCallback = null;
             _metricsExporterOptions = null;
+            _metricsMeterAdapterOptions = _metricsMeterAdapterDefaultOptions;
             _withAdditionalConfiguration = null;
             _withEndpoints = null;
         }
@@ -116,13 +125,15 @@ namespace AspNet.KickStarter
         /// <param name="metricsPort">The port the metrics HTTP listener should use. The default is 8081.</param>
         /// <param name="listenerOptionsCallback">The optional action for additional metrics HTTP listener configuration.</param>
         /// <param name="metricsExporterOptions">The optional action for additional metrics export configuration.</param>
+        /// <param name="metricsMeterAdapterOptions">The optional action for additional metrics adapter configuration such as using a custom ResolveHistogramBuckets function.</param>
         /// <returns>The current builder.</returns>
-        public ApiBuilder WithMetrics(ushort metricsPort = 8081, Action<KestrelMetricServerOptions>? listenerOptionsCallback = null, Action<HttpMiddlewareExporterOptions>? metricsExporterOptions = null)
+        public ApiBuilder WithMetrics(ushort metricsPort = 8081, Action<KestrelMetricServerOptions>? listenerOptionsCallback = null, Action<HttpMiddlewareExporterOptions>? metricsExporterOptions = null, Action<MeterAdapterOptions>? metricsMeterAdapterOptions = null)
         {
             _withMetrics = true;
             _metricsPort = metricsPort;
             _metricsPortOptionsCallback = listenerOptionsCallback;
             _metricsExporterOptions = metricsExporterOptions;
+            _metricsMeterAdapterOptions = metricsMeterAdapterOptions ?? _metricsMeterAdapterDefaultOptions;
             return this;
         }
 
@@ -207,6 +218,7 @@ namespace AspNet.KickStarter
 
             if (_withMetrics)
             {
+                Metrics.ConfigureMeterAdapter(_metricsMeterAdapterOptions);
                 builder.Services.AddMetricServer(options =>
                 {
                     options.Port = _metricsPort;

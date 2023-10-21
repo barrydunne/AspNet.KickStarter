@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.IO.Abstractions;
 using System.Reflection;
 
@@ -11,6 +13,11 @@ namespace AspNet.KickStarter.HttpHandlers
     public class HealthHandler
     {
         private const string _versionFile = "version.txt";
+
+        private static readonly Meter _meter = new("AspNet.KickStarter.HealthHandler");
+        private static readonly Counter<long> _countStatus = _meter.CreateCounter<long>("GetStatus.Handled.Count", null, "The number of get status requests handled.");
+        private static readonly Counter<long> _countVersion = _meter.CreateCounter<long>("GetVersion.Handled.Count", null, "The number of get version requests handled.");
+        private static readonly Histogram<double> _versionTime = _meter.CreateHistogram<double>("GetVersion.Duration", unit: "ms", "Time taken to get the version number.");
 
         private readonly IFileSystem _fileSystem;
         private readonly ILogger _logger;
@@ -39,7 +46,11 @@ namespace AspNet.KickStarter.HttpHandlers
         /// Get the status of the API.
         /// </summary>
         /// <returns>OK "GOOD".</returns>
-        public IResult GetStatus() => Results.Ok("GOOD");
+        public IResult GetStatus()
+        {
+            _countStatus.Add(1);
+            return Results.Ok("GOOD");
+        }
 
         /// <summary>
         /// Get the version of the API.
@@ -49,8 +60,10 @@ namespace AspNet.KickStarter.HttpHandlers
         public async Task<IResult> GetVersionAsync()
         {
             var version = "UNKNOWN";
+            var stopwatch = Stopwatch.StartNew();
             try
             {
+                _countVersion.Add(1);
                 _logger.LogDebug("Checking for version file at {VersionPath}", VersionFilePath);
                 if (_fileSystem.File.Exists(VersionFilePath))
                 {
@@ -68,6 +81,10 @@ namespace AspNet.KickStarter.HttpHandlers
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Failed to find version");
+            }
+            finally
+            {
+                _versionTime.Record(stopwatch.ElapsedMilliseconds);
             }
             return Results.Ok(version.Trim());
         }
