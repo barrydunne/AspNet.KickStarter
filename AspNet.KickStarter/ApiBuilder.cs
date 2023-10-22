@@ -14,12 +14,13 @@ namespace AspNet.KickStarter
     /// </summary>
     public class ApiBuilder
     {
-        // Unless defined otherwise by the client application, the histogram buckets will use a custom set of values.
-        // This is to override the Prometheus default histogram buckets which are Histogram.ExponentialBuckets(0.01, 2, 25)
-        // resulting in values 0.01, 0.02, 0.04, 0.08, 0.16, ... 83886.08, 167772.16
-        // Those default values are considered too high for millisecond timings which are assumed to be the normal metrics recorded by the applications that use this class.
-        // If custom values are required then they can be configured by passing a metricsMeterAdapterOptions action to WithMetrics().
-        private static readonly Action<MeterAdapterOptions> _metricsMeterAdapterDefaultOptions = (_) => _.ResolveHistogramBuckets = (_) => new[] { 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 };
+        // The Prometheus default histogram buckets, which are Histogram.ExponentialBuckets(0.01, 2, 25)
+        // result in values 0.01, 0.02, 0.04, 0.08, 0.16, ... 83886.08, 167772.16
+        // Those default values are very high for millisecond timings which are assumed to be the normal metrics recorded by the applications that use this class.
+        // 25 buckets are also a lot to fit into a Grafana Bar Guage panel.
+        // The buckets used by default here range from 1μs to 1 second with increasing pseudo-exponential widths.
+        // If custom values are required then they can be configured by passing a metricsMeterAdapterOptions action to WithMetrics() that changes ResolveHistogramBuckets.
+        private static readonly Action<MeterAdapterOptions> _metricsMeterAdapterDefaultOptions = (_) => _.ResolveHistogramBuckets = (_) => new[] { 0.001, 0.005, 0.1, 0.5, 1, 10, 125, 250, 500, 1000 };
 
         private bool _withSerilog;
         private Action<string>? _withSerilogDebugOutput;
