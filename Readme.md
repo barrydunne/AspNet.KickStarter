@@ -40,7 +40,7 @@ new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
     .WithSwagger()
     .WithServices(RegisterServices)
-    .WithEndpoints(MapEndpointsp)
+    .WithEndpoints(MapEndpoints)
     .WithFluentValidationFromAssemblyContaining<MyRequestValidator>()
     .WithMetrics(8081)
     .Build(args)
@@ -51,7 +51,7 @@ void RegisterServices(WebApplicationBuilder builder)
         .AddTransient<HealthHandler>()
         .AddSingleton<IFileSystem, FileSystem>();
 
-void MapEndpointsp(WebApplication app)
+void MapEndpoints(WebApplication app)
 {
     app.MapGet("/health/status", "GetHealthStatus", "Check API health",
         (HealthHandler handler) => handler.GetStatus());

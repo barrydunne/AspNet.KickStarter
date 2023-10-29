@@ -1,6 +1,6 @@
 # This workflow will build and publish the projects
 #
-# Rerequisites:
+# Prerequisites:
 #
 #   1) The NuGet API key stored as a repository secret named NUGET_KEY
 #      in Settings > Secrets and variables > Actions > Secrets

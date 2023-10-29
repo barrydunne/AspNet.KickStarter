@@ -6,7 +6,7 @@ new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
     .WithSwagger()
     .WithServices(RegisterServices)
-    .WithEndpoints(MapEndpointsp)
+    .WithEndpoints(MapEndpoints)
     .WithMetrics(8081)
     .Build(args)
     .Run();
@@ -22,7 +22,7 @@ void RegisterServices(WebApplicationBuilder builder)
         .AddSingleton<IFileSystem, FileSystem>();
 }
 
-void MapEndpointsp(WebApplication app)
+void MapEndpoints(WebApplication app)
 {
     app.MapGet("/health/status", "GetHealthStatus", "Check API health",
         (HealthHandler handler) => handler.GetStatus());
