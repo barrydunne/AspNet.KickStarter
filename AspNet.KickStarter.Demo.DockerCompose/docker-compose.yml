@@ -12,7 +12,7 @@ services:
     image: prom/prometheus
     container_name: prometheus.demo.aspnet.kickstarter
     build:
-      context: ../Prometheus
+      context: ./Prometheus
       dockerfile: Dockerfile
     restart: no
     ports:
@@ -22,10 +22,13 @@ services:
     image: grafana.demo.aspnet.kickstarter
     container_name: grafana.demo.aspnet.kickstarter
     build:
-      context: ../Grafana
+      context: ./Grafana
       dockerfile: Dockerfile
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
     restart: no
     ports:
       - 28088:3000 # HTTP
@@ -36,7 +39,7 @@ services:
     image: ${DOCKER_REGISTRY-}api.demo.aspnet.kickstarter
     container_name: api.demo.aspnet.kickstarter
     build:
-      context: ../../
+      context: ../
       dockerfile: AspNet.KickStarter.Demo/Dockerfile
       target: final
     restart: no

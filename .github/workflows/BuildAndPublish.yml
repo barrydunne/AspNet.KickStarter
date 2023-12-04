@@ -21,9 +21,10 @@ on:
 jobs:
   build-and-publish:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
+
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -33,12 +34,37 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Build
+      shell: pwsh
       run: dotnet build -c Release .\AspNet.KickStarter.sln
 
-    - name: Test net8
-      run: dotnet test .\AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj -c Release --framework net8.0 -l "console;verbosity=normal" -l "trx;logfilename=Net8TestResults.trx"
+    - name: Test AspNet.KickStarter
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/ak.xml" /p:Include=[AspNet.KickStarter]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.CQRS
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\AspNet.KickStarter.CQRS.Tests\AspNet.KickStarter.CQRS.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/cqrs.xml" /p:Include=[AspNet.KickStarter.CQRS]* /p:Threshold=100
+
+    - name: Report Generator
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
+      with:
+        reports: TestResults/ak.xml;TestResults/cqrs.xml
+        targetdir: TestResults/CoverageReport
+        reporttypes: TextSummary
+
+    - name: Output Coverage Report
+      shell: pwsh
+      run:  |
+        $workspace = $env:GITHUB_WORKSPACE
+        $report = Get-Content "$workspace/TestResults/CoverageReport/Summary.txt" -Raw
+        Write-Host $report
 
     - name: Pack AspNet.KickStarter
+      shell: pwsh
       run: |
         $version = '${{ github.event.inputs.version }}'
         $project = 'AspNet.KickStarter\AspNet.KickStarter.csproj'
@@ -47,16 +73,18 @@ jobs:
         Write-Host "Packing v$version of $project"
         dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Copyright=$copyright -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
 
-    - name: Pack AspNet.KickStarter.CQRS.Abstractions
+    - name: Pack AspNet.KickStarter.CQRS
+      shell: pwsh
       run: |
         $version = '${{ github.event.inputs.version }}'
-        $project = 'AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj'
+        $project = 'AspNet.KickStarter.CQRS\AspNet.KickStarter.CQRS.csproj'
         $year = Get-Date -Format 'yyyy'
         $copyright = "`"Copyright © Barry Dunne $year`""
         Write-Host "Packing v$version of $project"
         dotnet pack /p:PackageVersion=$version /p:AssemblyVersion=$version /p:FileVersion=$version /p:Copyright=$copyright -c Release $project --output "${{env.DOTNET_ROOT}}\Package"
 
     - name: Publish
+      shell: pwsh
       run: dotnet nuget push "${{env.DOTNET_ROOT}}\Package\*.${{ github.event.inputs.version }}.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }}
 
     - name: Tag version

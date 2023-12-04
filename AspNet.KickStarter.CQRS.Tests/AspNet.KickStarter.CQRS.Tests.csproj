@@ -23,11 +23,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="19.2.87" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNet.KickStarter\AspNet.KickStarter.csproj" />
+    <ProjectReference Include="..\AspNet.KickStarter.CQRS\AspNet.KickStarter.CQRS.csproj" />
   </ItemGroup>
 
 </Project>

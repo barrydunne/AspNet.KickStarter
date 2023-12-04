@@ -1,31 +1,49 @@
 using AspNet.KickStarter;
-using AspNet.KickStarter.HttpHandlers;
-using System.IO.Abstractions;
+using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.Demo.HttpHandlers;
+using AspNet.KickStarter.Demo.Models;
+using AspNet.KickStarter.Demo.Queries;
+using FluentValidation;
+using Mapster;
+using MediatR;
+using System.Reflection;
 
 new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
     .WithSwagger()
+    .WithHealthHandler()
     .WithServices(RegisterServices)
     .WithEndpoints(MapEndpoints)
+    .WithMappings(MapTypes)
     .WithMetrics(8081)
     .Build(args)
     .Run();
 
 void RegisterServices(WebApplicationBuilder builder)
 {
-    // API Handlers
+    // HTTP Handlers
     builder.Services
-        .AddTransient<HealthHandler>();
+        .AddTransient<NumberHandler>();
 
-    // FileSystem
+    // CQRS
     builder.Services
-        .AddSingleton<IFileSystem, FileSystem>();
+        .AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
+        .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+        .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 }
 
 void MapEndpoints(WebApplication app)
 {
-    app.MapGet("/health/status", "GetHealthStatus", "Check API health",
-        (HealthHandler handler) => handler.GetStatus());
-    app.MapGet("/health/version", "GetVersion", "Get the API version",
-        async (HealthHandler handler) => await handler.GetVersionAsync());
+    app.MapGet<GetDoubleResponse>("/number/double/{value}", "GetDouble", "Get a number doubled. Must be between 0 and 10 inclusive.",
+        async (NumberHandler handler, double value)
+            => await handler.GetDoubleAsync(new GetDoubleRequest { Value = value }));
+}
+
+void MapTypes()
+{
+    TypeAdapterConfig<GetDoubleRequest, GetDoubleQuery>.NewConfig()
+        .Map(dest => dest.Value, src => src.Value);
+
+    TypeAdapterConfig<double, GetDoubleResponse>.NewConfig()
+        .Map(dest => dest.Value, src => src);
 }

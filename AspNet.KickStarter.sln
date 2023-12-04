@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Demo.DockerCompose", "AspNet.KickStarter.Demo\DockerCompose\Demo.DockerCompose.dcproj", "{7B5F5B83-2282-49F1-B6EB-A88EA049CE7B}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "AspNet.KickStarter.Demo.DockerCompose", "AspNet.KickStarter.Demo.DockerCompose\AspNet.KickStarter.Demo.DockerCompose.dcproj", "{7B5F5B83-2282-49F1-B6EB-A88EA049CE7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter", "AspNet.KickStarter\AspNet.KickStarter.csproj", "{FE8AC0AC-E20C-4701-98B4-7400E1C0CA5A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS.Abstractions", "AspNet.KickStarter.CQRS.Abstractions\AspNet.KickStarter.CQRS.Abstractions.csproj", "{1615AB29-CB50-445D-825C-34918CBBE28A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS", "AspNet.KickStarter.CQRS\AspNet.KickStarter.CQRS.csproj", "{1615AB29-CB50-445D-825C-34918CBBE28A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Demo", "AspNet.KickStarter.Demo\AspNet.KickStarter.Demo.csproj", "{55E0032A-E143-41FB-A7CE-D11C087EFFCA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Tests", "AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj", "{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0D836E08-531E-410E-A6A9-33C77DAF98F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS.Tests", "AspNet.KickStarter.CQRS.Tests\AspNet.KickStarter.CQRS.Tests.csproj", "{A698F79D-52A6-4DA5-AA09-114CD5D2868D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +43,17 @@ Global
 		{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E650B1-3891-4AD9-A9EE-71E85E2128B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A698F79D-52A6-4DA5-AA09-114CD5D2868D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A698F79D-52A6-4DA5-AA09-114CD5D2868D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A698F79D-52A6-4DA5-AA09-114CD5D2868D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A698F79D-52A6-4DA5-AA09-114CD5D2868D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D8E650B1-3891-4AD9-A9EE-71E85E2128B9} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
+		{A698F79D-52A6-4DA5-AA09-114CD5D2868D} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DE53B83-67D6-41F8-87FD-A3FC7A3521EB}

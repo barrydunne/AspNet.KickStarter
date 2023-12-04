@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -10,11 +10,14 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY [".editorconfig", "."]
 COPY ["AspNet.KickStarter/AspNet.KickStarter.csproj", "AspNet.KickStarter/"]
+COPY ["AspNet.KickStarter.CQRS/AspNet.KickStarter.CQRS.csproj", "AspNet.KickStarter.CQRS/"]
 COPY ["AspNet.KickStarter.Demo/AspNet.KickStarter.Demo.csproj", "AspNet.KickStarter.Demo/"]
 RUN dotnet restore "AspNet.KickStarter/AspNet.KickStarter.csproj"
+RUN dotnet restore "AspNet.KickStarter.CQRS/AspNet.KickStarter.CQRS.csproj"
 RUN dotnet restore "AspNet.KickStarter.Demo/AspNet.KickStarter.Demo.csproj"
 # Build and test the projects
 COPY ["AspNet.KickStarter", "AspNet.KickStarter"]
+COPY ["AspNet.KickStarter.CQRS", "AspNet.KickStarter.CQRS"]
 COPY ["AspNet.KickStarter.Demo", "AspNet.KickStarter.Demo"]
 RUN dotnet build "AspNet.KickStarter.Demo/AspNet.KickStarter.Demo.csproj" -c Release -o /app/build
 
