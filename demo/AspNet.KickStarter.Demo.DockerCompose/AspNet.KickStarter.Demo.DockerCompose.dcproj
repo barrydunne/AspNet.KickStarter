@@ -8,7 +8,9 @@
     <DockerServiceUrl>http://localhost:28080</DockerServiceUrl>
     <DockerServiceName>api.demo.aspnet.kickstarter</DockerServiceName>
     <DockerComposeProjectName>demo-aspnet-kickstarter</DockerComposeProjectName>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <Target Name="Pack" />
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
