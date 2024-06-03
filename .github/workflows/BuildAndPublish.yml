@@ -118,7 +118,7 @@ jobs:
     - name: Report Generator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
       with:
-        reports: tests/TestResults/aiadc.xml;tests/TestResults/aiapc.xml;tests/TestResults/aie.xml;tests/TestResults/aifv.xml;tests/TestResults/aihh.xml;tests/TestResults/aim.xml;tests/TestResults/aiot.xml;tests/TestResults/aisl.xml;tests/TestResults/aisv.xml;tests/TestResults/aisw.xml;tests/TestResults/core.xml;tests/TestResults/core.xml;tests/TestResults/cqrs.xml;tests/TestResults/tr.xml
+        reports: TestResults/aiadc.xml;TestResults/aiapc.xml;TestResults/aie.xml;TestResults/aifv.xml;TestResults/aihh.xml;TestResults/aim.xml;TestResults/aiot.xml;TestResults/aisl.xml;TestResults/aisv.xml;TestResults/aisw.xml;TestResults/core.xml;TestResults/core.xml;TestResults/cqrs.xml;TestResults/tr.xml
         targetdir: TestResults/CoverageReport
         reporttypes: TextSummary
 
