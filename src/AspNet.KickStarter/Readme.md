@@ -19,6 +19,11 @@ The most basic use in a Program.cs file would be
 await new ApiBuilder().Build(args).RunAsync();
 ```
 
+For something more visible, add Swagger and some endpoints:
+```csharp
+await new ApiBuilder().WithSwagger().WithHealthHandler().Build(args).RunAsync();
+```
+
 Many fluent extension methods are available through the AddIn packages to add extra functionality. Each extension may provide additional configuration parameters.
 
 Further information about the extensions may be found in the readme for the AddIn package. See [NuGet](https://www.nuget.org/packages?q=AspNet.KickStarter) for the full list of AddIns.
