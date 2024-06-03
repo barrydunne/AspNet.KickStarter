@@ -7,17 +7,17 @@ using NUnit.Framework;
 namespace AspNet.KickStarter.CQRS.Tests;
 
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-[TestFixture(Category = "OpenTelemetryTracePipelineBehavior")]
-internal class OpenTelemetryTracePipelineBehaviorTests
+[TestFixture(Category = "TracePipelineBehavior")]
+internal class TracePipelineBehaviorTests
 {
     private readonly Fixture _fixture = new();
 
     [Test]
-    public async Task OpenTelemetryTracePipelineBehavior_without_trace_activity_returns_next()
+    public async Task TracePipelineBehavior_without_trace_activity_returns_next()
     {
-        var mockLogger = Substitute.For<ILogger<OpenTelemetryTracePipelineBehavior<TestQuery, Result<int>>>>();
+        var mockLogger = Substitute.For<ILogger<TracePipelineBehavior<TestQuery, Result<int>>>>();
         var nextValue = _fixture.Create<int>();
-        var sut = new OpenTelemetryTracePipelineBehavior<TestQuery, Result<int>>(mockLogger);
+        var sut = new TracePipelineBehavior<TestQuery, Result<int>>(mockLogger);
 
         var result = await sut.Handle(new TestQuery(), Next, CancellationToken.None);
 
@@ -26,12 +26,12 @@ internal class OpenTelemetryTracePipelineBehaviorTests
     }
 
     [Test]
-    public async Task OpenTelemetryTracePipelineBehavior_with_trace_starts_activity_and_returns_next()
+    public async Task TracePipelineBehavior_with_trace_starts_activity_and_returns_next()
     {
         var mockTraceActivity = Substitute.For<ITraceActivity>();
-        var mockLogger = Substitute.For<ILogger<OpenTelemetryTracePipelineBehavior<TestQuery, Result<int>>>>();
+        var mockLogger = Substitute.For<ILogger<TracePipelineBehavior<TestQuery, Result<int>>>>();
         var nextValue = _fixture.Create<int>();
-        var sut = new OpenTelemetryTracePipelineBehavior<TestQuery, Result<int>>(mockTraceActivity, mockLogger);
+        var sut = new TracePipelineBehavior<TestQuery, Result<int>>(mockTraceActivity, mockLogger);
 
         var result = await sut.Handle(new TestQuery(), Next, CancellationToken.None);
 

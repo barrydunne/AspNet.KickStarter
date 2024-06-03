@@ -44,9 +44,9 @@ This library provides interfaces used to implement CQRS with MediatR
 
 These commands and queries rely on `Result`, `Result<T>` and `Error` types from this library
 
-## OpenTelemetryTracePipelineBehavior
+## TracePipelineBehavior
 
-The library provides a generic `OpenTelemetryTracePipelineBehavior` class that adds automatic trace activities for any commands or queries.
+The library provides a generic `TracePipelineBehavior` class that adds automatic trace activities for any commands or queries.
 
 ## ValidationPipelineBehavior
 

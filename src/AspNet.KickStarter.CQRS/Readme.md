@@ -20,24 +20,24 @@ return result.Match(
 
 If the unsuccessful result contains a `ValidationResult` then this will return `Results.ValidationProblem` with the details, otherwise `Results.Problem`
 
-## OpenTelemetryTracePipelineBehavior
+## TracePipelineBehavior
 
-The library also provides a generic `OpenTelemetryTracePipelineBehavior` class that adds automatic trace activities for any commands or queries. This can be registered as follows:
+The library provides a generic `TracePipelineBehavior` class that adds automatic trace activities for any commands or queries. This can be registered as follows:
 
 ```csharp
 builder.Services
     .AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
-    .AddScoped(typeof(IPipelineBehavior<,>), typeof(OpenTelemetryTracePipelineBehavior<,>));
+    .AddTracePipelineBehavior();
 ```
 
 ## ValidationPipelineBehavior
 
-The library also provides a generic `ValidationPipelineBehavior` class that enables use of FluentValidation for any commands or queries with a corresponding validator class. This can be registered as follows:
+The library provides a generic `ValidationPipelineBehavior` class that enables use of FluentValidation for any commands or queries with a corresponding validator class. This can be registered as follows:
 
 ```csharp
 builder.Services
     .AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
-    .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+    .AddValidationPipelineBehavior()
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 ```
 

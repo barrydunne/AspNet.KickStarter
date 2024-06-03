@@ -5,7 +5,6 @@ using AspNet.KickStarter.Demo.Models;
 using AspNet.KickStarter.Demo.Queries;
 using FluentValidation;
 using Mapster;
-using MediatR;
 using System.Reflection;
 
 await new ApiBuilder()
@@ -28,8 +27,8 @@ void RegisterServices(WebApplicationBuilder builder)
     // CQRS
     builder.Services
         .AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
-        .AddScoped(typeof(IPipelineBehavior<,>), typeof(OpenTelemetryTracePipelineBehavior<,>))
-        .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+        .AddTracePipelineBehavior()
+        .AddValidationPipelineBehavior()
         .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 }
 
