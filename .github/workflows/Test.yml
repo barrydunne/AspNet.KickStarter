@@ -20,23 +20,89 @@ jobs:
     - name: Build
       shell: pwsh
       run: dotnet build -c Release .\AspNet.KickStarter.sln
-
-    - name: Test AspNet.KickStarter
+  
+    - name: Test AspNet.KickStarter.AddIn.AdditionalConfiguration
       shell: pwsh
       run: |
         $workspace = $env:GITHUB_WORKSPACE
-        dotnet test .\AspNet.KickStarter.Tests\AspNet.KickStarter.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/ak.xml" /p:Include=[AspNet.KickStarter]* /p:Threshold=100
+        dotnet test .\tests\AspNet.KickStarter.AddIn.AdditionalConfiguration.Tests\AspNet.KickStarter.AddIn.AdditionalConfiguration.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aiadc.xml" /p:Include=[AspNet.KickStarter.AddIn.AdditionalConfiguration]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.ApplicationConfiguration
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.ApplicationConfiguration.Tests\AspNet.KickStarter.AddIn.ApplicationConfiguration.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aiapc.xml" /p:Include=[AspNet.KickStarter.AddIn.ApplicationConfiguration]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.Endpoints
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Endpoints.Tests\AspNet.KickStarter.AddIn.Endpoints.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aie.xml" /p:Include=[AspNet.KickStarter.AddIn.Endpoints]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.FluentValidation
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.FluentValidation.Tests\AspNet.KickStarter.AddIn.FluentValidation.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aifv.xml" /p:Include=[AspNet.KickStarter.AddIn.FluentValidation]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.HealthHandler
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.HealthHandler.Tests\AspNet.KickStarter.AddIn.HealthHandler.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aihh.xml" /p:Include=[AspNet.KickStarter.AddIn.HealthHandler]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.Mappings
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Mappings.Tests\AspNet.KickStarter.AddIn.Mappings.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aim.xml" /p:Include=[AspNet.KickStarter.AddIn.Mappings]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.OpenTelemetry
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.OpenTelemetry.Tests\AspNet.KickStarter.AddIn.OpenTelemetry.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aiot.xml" /p:Include=[AspNet.KickStarter.AddIn.OpenTelemetry]* /p:Exclude=[*]*c__DisplayClass* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.Serilog
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Serilog.Tests\AspNet.KickStarter.AddIn.Serilog.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aisl.xml" /p:Include=[AspNet.KickStarter.AddIn.Serilog]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.Services
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Services.Tests\AspNet.KickStarter.AddIn.Services.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aisv.xml" /p:Include=[AspNet.KickStarter.AddIn.Services]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.AddIn.Swagger
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Swagger.Tests\AspNet.KickStarter.AddIn.Swagger.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aisw.xml" /p:Include=[AspNet.KickStarter.AddIn.Swagger]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.Core
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.Core.Tests\AspNet.KickStarter.Core.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/core.xml" /p:Include=[AspNet.KickStarter.Core]* /p:Threshold=100
 
     - name: Test AspNet.KickStarter.CQRS
       shell: pwsh
       run: |
         $workspace = $env:GITHUB_WORKSPACE
-        dotnet test .\AspNet.KickStarter.CQRS.Tests\AspNet.KickStarter.CQRS.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/cqrs.xml" /p:Include=[AspNet.KickStarter.CQRS]* /p:Threshold=100
+        dotnet test .\tests\AspNet.KickStarter.CQRS.Tests\AspNet.KickStarter.CQRS.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/cqrs.xml" /p:Include=[AspNet.KickStarter.CQRS]* /p:Threshold=100
+
+    - name: Test AspNet.KickStarter.Tracing
+      shell: pwsh
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test .\tests\AspNet.KickStarter.Tracing.Tests\AspNet.KickStarter.Tracing.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/tr.xml" /p:Include=[AspNet.KickStarter.Tracing]* /p:Threshold=100
 
     - name: Report Generator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
       with:
-        reports: TestResults/ak.xml;TestResults/cqrs.xml
+        reports: tests/TestResults/aiadc.xml;tests/TestResults/aiapc.xml;tests/TestResults/aie.xml;tests/TestResults/aifv.xml;tests/TestResults/aihh.xml;tests/TestResults/aim.xml;tests/TestResults/aiot.xml;tests/TestResults/aisl.xml;tests/TestResults/aisv.xml;tests/TestResults/aisw.xml;tests/TestResults/core.xml;tests/TestResults/core.xml;tests/TestResults/cqrs.xml;tests/TestResults/tr.xml
         targetdir: TestResults/CoverageReport
         reporttypes: TextSummary
 
