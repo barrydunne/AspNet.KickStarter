@@ -15,7 +15,12 @@
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Authors>Barry Dunne</Authors>
     <Description>This simplifies the bootstrapping code to run a minimal API with optional AddIn support for Serilog, FluentValidation, OpenTelemetry and Swagger.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">

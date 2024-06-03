@@ -16,8 +16,13 @@
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Authors>Barry Dunne</Authors>
     <Description>This simplifies the bootstrapping code to run a minimal API with optional support for OpenTelemetry metrics, traces and logging.</Description>
-    <NoWarn>NU5104</NoWarn>
+    <NoWarn>NU5104</NoWarn> <!-- OpenTelemetry packages are not yet available as release versions -->
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">

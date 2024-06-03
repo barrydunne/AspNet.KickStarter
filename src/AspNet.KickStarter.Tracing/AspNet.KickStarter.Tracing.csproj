@@ -15,7 +15,12 @@
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Authors>Barry Dunne</Authors>
     <Description>Includes an ITraceActivity interface and singleton implementation that is added by the WithOpenTelemetry extension from AspNet.KickStarter.AddIns.OpenTelemetry.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">

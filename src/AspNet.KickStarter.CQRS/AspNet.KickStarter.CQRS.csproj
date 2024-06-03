@@ -15,7 +15,12 @@
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Authors>Barry Dunne</Authors>
     <Description>This is a basic library of interfaces to use for CQRS commands and queries with MediatR.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
