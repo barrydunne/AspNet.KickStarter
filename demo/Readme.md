@@ -2,7 +2,7 @@
 
 The demo project here illustrates much of the functionality provided by AspNet.KickStarter.
 
-It adds Swagger, Serliog logging, health endpoints, CQRS with OpenTelemetry traces for the query handler.
+It adds Swagger, Serliog logging, health endpoints, as well as CQRS with OpenTelemetry traces for the query handler.
 
 ## AspNet.KickStarter.Demo.DockerCompose
 
