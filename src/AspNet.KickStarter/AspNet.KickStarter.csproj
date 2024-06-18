@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNet.KickStarter.CQRS\AspNet.KickStarter.CQRS.csproj" />
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.AdditionalConfiguration\AspNet.KickStarter.AddIn.AdditionalConfiguration.csproj" />
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.ApplicationConfiguration\AspNet.KickStarter.AddIn.ApplicationConfiguration.csproj" />
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.Endpoints\AspNet.KickStarter.AddIn.Endpoints.csproj" />
@@ -53,6 +52,9 @@
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.Serilog\AspNet.KickStarter.AddIn.Serilog.csproj" />
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.Services\AspNet.KickStarter.AddIn.Services.csproj" />
     <ProjectReference Include="..\AspNet.KickStarter.AddIn.Swagger\AspNet.KickStarter.AddIn.Swagger.csproj" />
+    <ProjectReference Include="..\AspNet.KickStarter.CQRS\AspNet.KickStarter.CQRS.csproj" />
+    <ProjectReference Include="..\AspNet.KickStarter.FunctionalResult\AspNet.KickStarter.FunctionalResult.csproj" />
+    <ProjectReference Include="..\AspNet.KickStarter.Tracing\AspNet.KickStarter.Tracing.csproj" />
   </ItemGroup>
 
 </Project>

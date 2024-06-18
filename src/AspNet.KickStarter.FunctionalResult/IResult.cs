@@ -1,4 +1,4 @@
-﻿namespace AspNet.KickStarter.CQRS;
+﻿namespace AspNet.KickStarter.FunctionalResult;
 
 /// <summary>
 /// Represents the result of an operation, either success or an error.

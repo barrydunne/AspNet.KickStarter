@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 
-namespace AspNet.KickStarter.CQRS;
+namespace AspNet.KickStarter.FunctionalResult;
 
 /// <summary>
 /// Represents a failed operation.

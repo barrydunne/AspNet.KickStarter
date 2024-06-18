@@ -61,6 +61,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.CQRS.Tests", "tests\AspNet.KickStarter.CQRS.Tests\AspNet.KickStarter.CQRS.Tests.csproj", "{6E815499-9AD7-4C60-803A-890FB9A07D73}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.FunctionalResult", "src\AspNet.KickStarter.FunctionalResult\AspNet.KickStarter.FunctionalResult.csproj", "{4B282131-98A2-4528-86A9-D8ED4B6C920A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.FunctionalResult.Tests", "tests\AspNet.KickStarter.FunctionalResult.Tests\AspNet.KickStarter.FunctionalResult.Tests.csproj", "{613C0C78-094D-47A3-B2B8-7171A59C9F2C}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Tracing", "src\AspNet.KickStarter.Tracing\AspNet.KickStarter.Tracing.csproj", "{6EC6024C-EF08-434D-B02F-AD7E6C8967D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.KickStarter.Tracing.Tests", "tests\AspNet.KickStarter.Tracing.Tests\AspNet.KickStarter.Tracing.Tests.csproj", "{BD0D2243-E68E-4A85-B67B-63DBEE9773D5}"
@@ -179,6 +183,14 @@ Global
 		{6E815499-9AD7-4C60-803A-890FB9A07D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E815499-9AD7-4C60-803A-890FB9A07D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E815499-9AD7-4C60-803A-890FB9A07D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B282131-98A2-4528-86A9-D8ED4B6C920A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B282131-98A2-4528-86A9-D8ED4B6C920A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B282131-98A2-4528-86A9-D8ED4B6C920A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B282131-98A2-4528-86A9-D8ED4B6C920A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{613C0C78-094D-47A3-B2B8-7171A59C9F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{613C0C78-094D-47A3-B2B8-7171A59C9F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{613C0C78-094D-47A3-B2B8-7171A59C9F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{613C0C78-094D-47A3-B2B8-7171A59C9F2C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6EC6024C-EF08-434D-B02F-AD7E6C8967D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6EC6024C-EF08-434D-B02F-AD7E6C8967D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EC6024C-EF08-434D-B02F-AD7E6C8967D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -206,6 +218,7 @@ Global
 		{2183E485-0CC7-4157-926E-ABBFAECF4DCA} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
 		{CB3276D0-8699-4751-A181-2E8AEB4CD5CD} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
 		{6E815499-9AD7-4C60-803A-890FB9A07D73} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
+		{613C0C78-094D-47A3-B2B8-7171A59C9F2C} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
 		{BD0D2243-E68E-4A85-B67B-63DBEE9773D5} = {0D836E08-531E-410E-A6A9-33C77DAF98F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

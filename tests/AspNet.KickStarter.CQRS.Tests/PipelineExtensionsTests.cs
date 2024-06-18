@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AspNet.KickStarter.FunctionalResult;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

@@ -1,5 +1,6 @@
 ﻿using AspNet.KickStarter.Demo.Models;
 using AspNet.KickStarter.Demo.Queries;
+using AspNet.KickStarter.FunctionalResult.Extensions;
 using Mapster;
 using MediatR;
 

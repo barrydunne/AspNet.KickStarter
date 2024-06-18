@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using AspNet.KickStarter.FunctionalResult;
+using AutoFixture;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;

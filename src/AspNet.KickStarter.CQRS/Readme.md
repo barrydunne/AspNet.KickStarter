@@ -5,20 +5,7 @@ This library provides the following basic interfaces used to implement CQRS with
 * `ICommand` and `ICommandHandler`
 * `IQuery` and `IQueryHandler`
 
-These commands and queries rely on `Result`, `Result<T>` and `Error` types from this library, these types support implicit conversions for ease of use.
-
-The `Result` class provides `Switch` and `Match` methods to conditionally perform actions depending on success or error of the result. They also provide access to the `Value` or `Error` values.
-
-The `Error` class supports FluentValidation errors and provides an `AsHttpResult` method to produce a suitable IResult from a HTTP handler. For example:
-
-```csharp
-var result = await _mediator.Send(new GetSomeQuery());
-return result.Match(
-    success => Results.Ok(success),
-    error => error.AsHttpResult());
-```
-
-If the unsuccessful result contains a `ValidationResult` then this will return `Results.ValidationProblem` with the details, otherwise `Results.Problem`
+These commands and queries rely on `Result`, `Result<T>` and `Error` types from the `AspNet.KickStarter.FunctionalResult` library.
 
 ## TracePipelineBehavior
 

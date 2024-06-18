@@ -42,7 +42,7 @@ This library provides interfaces used to implement CQRS with MediatR
 * `ICommand` and `ICommandHandler`
 * `IQuery` and `IQueryHandler`
 
-These commands and queries rely on `Result`, `Result<T>` and `Error` types from this library
+These commands and queries rely on `Result`, `Result<T>` and `Error` types from the `AspNet.KickStarter.FunctionalResult` library
 
 ## TracePipelineBehavior
 

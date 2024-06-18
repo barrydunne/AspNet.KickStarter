@@ -8,7 +8,8 @@ To reduce the dependencies the individual packages may be referenced instead.
 
 * `AspNet.KickStarter.Core` This is the base library that provides the `ApiBuilder`.
 * `AspNet.KickStarter.AddIn.xxx` These are the packages that provide the extended functionality such as OpenTelemetry and FluentValidation.
-* `AspNet.KickStarter.CQRS` This provides a number of interfaces and classes to use when working with MediatR. Including functional result types and automatic trace activities of handlers.
+* `AspNet.KickStarter.CQRS` This provides a number of interfaces and classes to use when working with MediatR. 
+* `AspNet.KickStarter.FunctionalResult` Includes functional result types.
 
 ### ApiBuilder
 

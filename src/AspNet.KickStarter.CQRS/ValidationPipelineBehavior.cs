@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AspNet.KickStarter.FunctionalResult;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

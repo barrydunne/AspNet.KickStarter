@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AspNet.KickStarter.FunctionalResult;
+using MediatR;
 
 namespace AspNet.KickStarter.CQRS.Abstractions.Queries;
 

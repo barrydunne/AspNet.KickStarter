@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 
-namespace AspNet.KickStarter.CQRS.Tests;
+namespace AspNet.KickStarter.FunctionalResult.Tests;
 
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 [TestFixture(Category = "Error")]

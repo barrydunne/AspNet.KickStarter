@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using AspNet.KickStarter.FunctionalResult;
+using AutoFixture;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
