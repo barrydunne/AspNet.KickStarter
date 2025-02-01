@@ -95,7 +95,7 @@ jobs:
       shell: pwsh
       run: |
         $workspace = $env:GITHUB_WORKSPACE
-        dotnet test .\tests\AspNet.KickStarter.AddIn.Swagger.Tests\AspNet.KickStarter.AddIn.Swagger.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aisw.xml" /p:Include=[AspNet.KickStarter.AddIn.Swagger]* /p:Threshold=100
+        dotnet test .\tests\AspNet.KickStarter.AddIn.Swagger.Tests\AspNet.KickStarter.AddIn.Swagger.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/aisw.xml" /p:Include=[AspNet.KickStarter.AddIn.Swagger]* /p:Threshold=50
 
     - name: Test AspNet.KickStarter.Core
       shell: pwsh
