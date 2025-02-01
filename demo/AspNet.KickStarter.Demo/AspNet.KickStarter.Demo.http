@@ -1,4 +1,4 @@
-@ApiAddress = http://localhost:5195
+@ApiAddress = http://localhost:28080
 @MetricsAddress = http://localhost:8081
 
 GET {{ApiAddress}}/health/status

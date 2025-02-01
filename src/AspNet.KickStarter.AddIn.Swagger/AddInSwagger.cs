@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using NSwag;
+using NSwag.Generation.AspNetCore;
+using NSwag.Generation.Processors.Security;
 using System.Diagnostics.CodeAnalysis;
 
 namespace AspNet.KickStarter;
@@ -12,6 +13,21 @@ namespace AspNet.KickStarter;
 /// </summary>
 internal class AddInSwagger : IAddIn
 {
+    /// <summary>
+    /// Gets or sets the document title.
+    /// </summary>
+    internal string Title { get; set; } = "API Documentation";
+
+    /// <summary>
+    /// Gets or sets the path to the swagger UI page.
+    /// </summary>
+    public string Path { get; internal set; } = "";
+
+    /// <summary>
+    /// Gets or sets the path to the ReDoc documentation page.
+    /// </summary>
+    public string ReDocPath { get; internal set; } = "/docs";
+
     /// <summary>
     /// Gets or sets a value indicating whether Bearer tokens are supported.
     /// </summary>
@@ -26,7 +42,7 @@ internal class AddInSwagger : IAddIn
     public void Configure(WebApplicationBuilder builder, IReadOnlyCollection<IAddIn> addIns)
     {
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options => SetupSwaggerGenOptions(options));
+        builder.Services.AddSwaggerDocument(SetupSwaggerGenOptions);
     }
 
     /// <inheritdoc/>
@@ -36,48 +52,57 @@ internal class AddInSwagger : IAddIn
         if (WithSwaggerOnlyInDevelopment && !app.Environment.IsDevelopment())
             return;
 
-        app.UseSwagger(swagger => swagger.RouteTemplate = "{documentname}/swagger.json");
-        app.UseSwaggerUI(ui =>
-        {
-            ui.RoutePrefix = "";
-            ui.EnableTryItOutByDefault();
-        });
+        app
+            .UseOpenApi(configure => configure.Path = "/swagger/swagger.json")
+            .UseSwaggerUi(configure =>
+            {
+                configure.Path = Path;
+                configure.DocumentPath = $"/swagger/swagger.json";
+                configure.DocumentTitle = Title;
+                configure.DocExpansion = "list";
+                configure.DefaultModelsExpandDepth = -1;
+                configure.AdditionalSettings["tryItOutEnabled"] = "true";
+                configure.CustomInlineStyles = WithSwaggerBearerToken
+                    ? ".schemes-server-container {display: none !important}"
+                    : ".scheme-container {display: none !important}";
+            })
+            .UseReDoc(configure =>
+            {
+                configure.Path = ReDocPath;
+                configure.DocumentPath = $"/swagger/swagger.json";
+                configure.DocumentTitle = Title;
+                configure.AdditionalSettings["pathInMiddlePanel"] = "true";
+                configure.AdditionalSettings["jsonSampleExpandLevel"] = "2";
+            })
+            .Use((context, next) =>
+            {
+                if (context.Request.Path.Value?.EndsWith("/swagger.json") == true)
+                    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                return next.Invoke();
+            });
     }
 
     /// <summary>
     /// Configure Bearer token authorization if required.
     /// </summary>
-    /// <param name="options">The Swagger options to configure.</param>
-    internal void SetupSwaggerGenOptions(SwaggerGenOptions options)
+    /// <param name="settings">The Swagger settings to configure.</param>
+    internal void SetupSwaggerGenOptions(AspNetCoreOpenApiDocumentGeneratorSettings settings)
     {
+        settings.Title = Title;
         if (!WithSwaggerBearerToken)
             return;
 
         var scheme = new OpenApiSecurityScheme
         {
             Name = "Authorization",
-            Description = "Enter your access token below without the 'Bearer ' prefix.",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http, // Does not require the "Bearer " prefix to be used, unlike ApiKey.
-            Scheme = "Bearer"
+            Description = "Enter 'Bearer {your token}' to authenticate.",
+            In = OpenApiSecurityApiKeyLocation.Header,
+            Type = OpenApiSecuritySchemeType.ApiKey,
+            Scheme = "bearer"
         };
-        options.AddSecurityDefinition("Bearer", scheme);
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Name = "Bearer",
-                    In = ParameterLocation.Header,
-                    Reference = new OpenApiReference
-                    {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    }
-                },
-                Array.Empty<string>()
-            }
-        });
+
+        settings.AddSecurity("Bearer", [], scheme);
+        settings.OperationProcessors.Add(new OperationSecurityScopeProcessor("Bearer"));
     }
 }
 
@@ -90,13 +115,25 @@ public static class SwaggerAddInExtensions
     /// Use Swagger/OpenApi in the API.
     /// </summary>
     /// <param name="apiBuilder">The <see cref="ApiBuilder"/> to add Swagger to.</param>
+    /// <param name="title">The document title.</param>
+    /// <param name="path">The path to the swagger UI page.</param>
+    /// <param name="redocPath">The path to the ReDoc documentation page.</param>
     /// <param name="onlyInDevelopment">Whether to only include swagger page when running in development mode.</param>
     /// <param name="useBearerToken">Whether to include Bearer token authorization.</param>
     /// <returns>The current builder.</returns>
-    public static ApiBuilder WithSwagger(this ApiBuilder apiBuilder, bool onlyInDevelopment = false, bool useBearerToken = false)
+    public static ApiBuilder WithSwagger(
+        this ApiBuilder apiBuilder,
+        string title = "API Documentation",
+        string path = "",
+        string redocPath = "/docs",
+        bool onlyInDevelopment = false,
+        bool useBearerToken = false)
     {
         apiBuilder.RegisterAddIn(new AddInSwagger
         {
+            Title = title,
+            Path = path,
+            ReDocPath = redocPath,
             WithSwaggerOnlyInDevelopment = onlyInDevelopment,
             WithSwaggerBearerToken = useBearerToken
         });

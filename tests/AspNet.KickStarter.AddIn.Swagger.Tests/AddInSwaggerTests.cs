@@ -2,8 +2,9 @@
 using AutoFixture;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using NSwag.Generation.AspNetCore;
+using NSwag.Generation.Processors.Security;
 using NUnit.Framework;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AspNet.KickStarter.AddIn.Swagger.Tests;
 
@@ -23,7 +24,7 @@ internal class AddInSwaggerTests
 
         sut.Configure(builder, []);
 
-        Assert.That(serviceCollection, Has.Some.Matches<ServiceDescriptor>(_ => _.ImplementationType == typeof(SwaggerGenerator)));
+        Assert.That(serviceCollection, Has.Some.Matches<ServiceDescriptor>(_ => _.ImplementationType?.FullName == "NSwag.AspNetCore.OpenApiDocumentProvider"));
     }
 
     [Test]
@@ -47,6 +48,9 @@ internal class AddInSwaggerTests
         apiBuilder.WithSwagger();
 
         var addin = apiBuilder.GetAddIn<AddInSwagger>();
+        Assert.That(addin?.Title, Is.EqualTo("API Documentation"));
+        Assert.That(addin?.Path, Is.EqualTo(""));
+        Assert.That(addin?.ReDocPath, Is.EqualTo("/docs"));
         Assert.That(addin?.WithSwaggerBearerToken, Is.False, "Incorrect WithSwaggerBearerToken");
         Assert.That(addin?.WithSwaggerOnlyInDevelopment, Is.False, "Incorrect WithSwaggerOnlyInDevelopment");
     }
@@ -55,10 +59,16 @@ internal class AddInSwaggerTests
     public void WithSwagger_registers_add_in_with_custom_properties()
     {
         var apiBuilder = new ApiBuilder();
+        var title = _fixture.Create<string>();
+        var path = _fixture.Create<string>();
+        var redoc = _fixture.Create<string>();
 
-        apiBuilder.WithSwagger(true, true);
+        apiBuilder.WithSwagger(title, path, redoc, true, true);
 
         var addin = apiBuilder.GetAddIn<AddInSwagger>();
+        Assert.That(addin?.Title, Is.EqualTo(title));
+        Assert.That(addin?.Path, Is.EqualTo(path));
+        Assert.That(addin?.ReDocPath, Is.EqualTo(redoc));
         Assert.That(addin?.WithSwaggerBearerToken, Is.True, "Incorrect WithSwaggerBearerToken");
         Assert.That(addin?.WithSwaggerOnlyInDevelopment, Is.True, "Incorrect WithSwaggerOnlyInDevelopment");
     }
@@ -67,11 +77,20 @@ internal class AddInSwaggerTests
     [TestCase(false)]
     public void AddInSwaggger_SetupSwaggerGenOptions_adds_bearer_if_required(bool withSwaggerBearerToken)
     {
-        var options = new SwaggerGenOptions();
+        var options = new AspNetCoreOpenApiDocumentGeneratorSettings();
         var sut = new AddInSwagger { WithSwaggerBearerToken = withSwaggerBearerToken };
 
         sut.SetupSwaggerGenOptions(options);
 
-        Assert.That(options.SwaggerGeneratorOptions.SecuritySchemes.ContainsKey("Bearer"), Is.EqualTo(withSwaggerBearerToken));
+        var def = options.DocumentProcessors.FirstOrDefault(_ => _ is SecurityDefinitionAppender) as SecurityDefinitionAppender;
+        if (withSwaggerBearerToken)
+        {
+            Assert.That(def, Is.Not.Null);
+            var nameField = typeof(SecurityDefinitionAppender).GetField("_name", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var name = nameField?.GetValue(def);
+            Assert.That(name, Is.EqualTo("Bearer"));
+        }
+        else
+            Assert.That(def, Is.Null);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Serilog.Core;
+using System.Reflection;
 
 namespace AspNet.KickStarter.AddIn.Serilog.Tests;
 
@@ -21,9 +22,9 @@ internal class AddInSerilogTests
         var builder = WebApplication.CreateBuilder(Array.Empty<string>());
         builder.SetHostServices(serviceCollection);
         var sut = new AddInSerilog { DebugOutput = (_) => { } };
-        
+
         sut.Configure(builder, []);
-        
+
         Assert.That(serviceCollection, Has.Some.Matches<ServiceDescriptor>(_ => _.ServiceType == typeof(global::Serilog.ILogger)));
     }
 
@@ -58,15 +59,17 @@ internal class AddInSerilogTests
         var serviceCollection = new ServiceCollection();
         var builder = WebApplication.CreateBuilder(Array.Empty<string>());
         builder.SetHostServices(serviceCollection);
-        var sut = new AddInSerilog { DebugOutput = (_) => { } };
-        
-        sut.Configure(builder, []);
-        
         var endpoint = $"http://localhost:{_fixture.Create<ushort>()}/";
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT", endpoint);
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf");
-        var logger = serviceCollection.BuildServiceProvider().GetService<global::Serilog.ILogger>() as ILogEventSink;
+        var sut = new AddInSerilog { DebugOutput = (_) => { } };
+
+        sut.Configure(builder, []);
+
+        using var provider = serviceCollection.BuildServiceProvider();
+        var logger = provider.GetService<global::Serilog.ILogger>() as ILogEventSink;
         Assert.That(WritesToOpenTelemetry(logger, endpoint, false), Is.False);
+        (logger as IDisposable)?.Dispose();
     }
 
     [Test]
@@ -76,15 +79,18 @@ internal class AddInSerilogTests
         var builder = WebApplication.CreateBuilder(Array.Empty<string>());
         builder.SetHostServices(serviceCollection);
         var openTelemetry = new AddInOpenTelemetry();
-        var sut = new AddInSerilog { DebugOutput = (_) => { } };
-        
-        sut.Configure(builder, [openTelemetry]);
-        
         var endpoint = $"http://localhost:{_fixture.Create<ushort>()}/";
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT", endpoint);
+        Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", null);
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf");
-        var logger = serviceCollection.BuildServiceProvider().GetService<global::Serilog.ILogger>() as ILogEventSink;
+        var sut = new AddInSerilog { DebugOutput = (_) => { } };
+
+        sut.Configure(builder, [openTelemetry]);
+
+        using var provider = serviceCollection.BuildServiceProvider();
+        var logger = provider.GetService<global::Serilog.ILogger>() as ILogEventSink;
         Assert.That(WritesToOpenTelemetry(logger, endpoint, false), Is.True);
+        (logger as IDisposable)?.Dispose();
     }
 
     [Test]
@@ -94,16 +100,18 @@ internal class AddInSerilogTests
         var builder = WebApplication.CreateBuilder(Array.Empty<string>());
         builder.SetHostServices(serviceCollection);
         var openTelemetry = new AddInOpenTelemetry();
-        var sut = new AddInSerilog { DebugOutput = (_) => { } };
-
-        sut.Configure(builder, [openTelemetry]);
-
         var endpoint = $"http://localhost:{_fixture.Create<ushort>()}/";
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT", null);
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", endpoint);
         Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_PROTOCOL", "grpc");
-        var logger = serviceCollection.BuildServiceProvider().GetService<global::Serilog.ILogger>() as ILogEventSink;
+        var sut = new AddInSerilog { DebugOutput = (_) => { } };
+
+        sut.Configure(builder, [openTelemetry]);
+
+        using var provider = serviceCollection.BuildServiceProvider();
+        var logger = provider.GetService<global::Serilog.ILogger>() as ILogEventSink;
         Assert.That(WritesToOpenTelemetry(logger, endpoint, true), Is.True);
+        (logger as IDisposable)?.Dispose();
     }
 
     private bool WritesToOpenTelemetry(ILogEventSink? sink, string endpoint, bool grpc)
@@ -115,14 +123,15 @@ internal class AddInSerilogTests
         {
             try
             {
-                var exporter = sink.GetType().GetField("_exporter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(sink);
-                var client = exporter?.GetType().GetField("_client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(exporter);
+                var exporter = sink.GetType().GetField("_exporter", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(sink);
+                var client = exporter?.GetType().GetField("_client", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(exporter);
                 if (grpc)
                 {
                     if (exporter?.GetType().Name == "GrpcExporter")
                     {
-                        var channel = exporter?.GetType().GetField("_channel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(exporter);
-                        var address = channel?.GetType().GetProperty("Address", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(channel);
+                        var channel = exporter?.GetType().GetField("_channel", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(exporter)
+                                   ?? exporter?.GetType().GetField("_tracesChannel", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(exporter);
+                        var address = channel?.GetType().GetProperty("Address", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(channel);
                         Assert.That(address?.ToString(), Is.EqualTo(endpoint));
                         return true;
                     }
@@ -131,7 +140,15 @@ internal class AddInSerilogTests
                 {
                     if (exporter?.GetType().Name == "HttpExporter")
                     {
-                        Assert.That((client as HttpClient)?.BaseAddress?.ToString(), Is.EqualTo(endpoint));
+                        if ((client as HttpClient)?.BaseAddress is null)
+                        {
+                            var logsEndpoint = exporter?.GetType().GetField("_logsEndpoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(exporter);
+                            var tracesEndpoint = exporter?.GetType().GetField("_tracesEndpoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(exporter);
+                            Assert.That(logsEndpoint, Is.EqualTo($"{endpoint}v1/logs"));
+                            Assert.That(tracesEndpoint, Is.EqualTo($"{endpoint}v1/traces"));
+                        }
+                        else
+                            Assert.That((client as HttpClient)?.BaseAddress?.ToString(), Is.EqualTo(endpoint));
                         return true;
                     }
                 }
@@ -141,21 +158,21 @@ internal class AddInSerilogTests
 
         try
         {
-            var innerSink = sink!.GetType().GetField("_sink", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(sink) as ILogEventSink;
+            var innerSink = sink!.GetType().GetField("_sink", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(sink) as ILogEventSink;
             if (WritesToOpenTelemetry(innerSink, endpoint, grpc))
                 return true;
         }
         catch { }
         try
         {
-            var targetSink = sink!.GetType().GetField("_targetSink", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(sink) as ILogEventSink;
+            var targetSink = sink!.GetType().GetField("_targetSink", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(sink) as ILogEventSink;
             if (WritesToOpenTelemetry(targetSink, endpoint, grpc))
                 return true;
         }
         catch { }
         try
         {
-            var sinks = sink!.GetType().GetField("_sinks", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(sink) as ILogEventSink[];
+            var sinks = sink!.GetType().GetField("_sinks", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(sink) as ILogEventSink[];
             if (sinks is not null)
             {
                 foreach (var item in sinks)

@@ -9,7 +9,7 @@ using System.Reflection;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
-    .WithSwagger()
+    .WithSwagger(title: "Demo API")
     .WithHealthHandler()
     .WithServices(RegisterServices)
     .WithEndpoints(MapEndpoints)

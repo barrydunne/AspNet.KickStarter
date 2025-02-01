@@ -1,6 +1,6 @@
 # AspNet.KickStarter.AddIn.Swagger
 
-This library provides an extension method to include swagger in the application.
+This library provides an extension method to include swagger and redoc in the application.
 
 ### Sample Usage
 
@@ -18,6 +18,9 @@ await new ApiBuilder()
 ```csharp
 await new ApiBuilder()
     .WithSwagger(
+        title: "My API",
+        path: "",
+        redocPath: "/docs",
         onlyInDevelopment: true,
         useBearerToken: true
     )
