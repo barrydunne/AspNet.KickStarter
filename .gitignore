@@ -4,3 +4,4 @@ obj
 *.log
 *.user
 TestResults
+/packages

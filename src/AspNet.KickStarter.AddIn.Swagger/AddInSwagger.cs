@@ -21,12 +21,12 @@ internal class AddInSwagger : IAddIn
     /// <summary>
     /// Gets or sets the path to the swagger UI page.
     /// </summary>
-    public string Path { get; internal set; } = "";
+    public string Path { get; set; } = "";
 
     /// <summary>
     /// Gets or sets the path to the ReDoc documentation page.
     /// </summary>
-    public string ReDocPath { get; internal set; } = "/docs";
+    public string ReDocPath { get; set; } = "/docs";
 
     /// <summary>
     /// Gets or sets a value indicating whether Bearer tokens are supported.
