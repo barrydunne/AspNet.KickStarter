@@ -5,13 +5,14 @@ using AspNet.KickStarter.Demo.Models;
 using AspNet.KickStarter.Demo.Queries;
 using FluentValidation;
 using Mapster;
+using Serilog;
 using System.Reflection;
 
 await new ApiBuilder()
     .WithSerilog(
         // Optional serilog customizations
-        configure: config => config.Enrich.WithProperty("ProcessId", Environment.ProcessId),
-        debugOutput: msg => Console.WriteLine($"Serilog: {msg}"))
+        configure: config => config.Enrich.WithEnvironmentName(),
+        debugOutput: message => Console.WriteLine($"Serilog: {message}"))
     .WithSwagger(title: "Demo API")
     .WithHealthHandler()
     .WithServices(RegisterServices)

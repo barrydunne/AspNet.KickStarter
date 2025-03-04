@@ -1,11 +1,11 @@
 # The ASP.Net 8 runtime is the base image required for both building a final image and Visual Studio debugging
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 # Restore the projects, this is done to enable docker caching of the image with the packages
 WORKDIR /src
 COPY [".editorconfig", "."]

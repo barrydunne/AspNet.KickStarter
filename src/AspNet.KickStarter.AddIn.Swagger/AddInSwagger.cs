@@ -43,6 +43,9 @@ internal class AddInSwagger : IAddIn
     {
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocument(SetupSwaggerGenOptions);
+#if NET9_0_OR_GREATER
+        builder.Services.AddOpenApi();
+#endif
     }
 
     /// <inheritdoc/>
@@ -52,8 +55,13 @@ internal class AddInSwagger : IAddIn
         if (WithSwaggerOnlyInDevelopment && !app.Environment.IsDevelopment())
             return;
 
+#if NET9_0_OR_GREATER
+        app.MapOpenApi("/swagger/swagger.json");
+#else
+        app.UseOpenApi(configure => configure.Path = "/swagger/swagger.json");
+#endif
+
         app
-            .UseOpenApi(configure => configure.Path = "/swagger/swagger.json")
             .UseSwaggerUi(configure =>
             {
                 configure.Path = Path;
