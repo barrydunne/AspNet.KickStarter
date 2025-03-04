@@ -12,6 +12,11 @@ namespace AspNet.KickStarter;
 internal class AddInSerilog : IAddIn
 {
     /// <summary>
+    /// Gets or sets an optional action to configure the logger.
+    /// </summary>
+    internal Action<LoggerConfiguration>? LoggerConfiguration { get; set; } = null;
+
+    /// <summary>
     /// Gets or sets an optional action to invoke with Serilog self-log messages.
     /// </summary>
     internal Action<string>? DebugOutput { get; set; } = null;
@@ -53,6 +58,7 @@ internal class AddInSerilog : IAddIn
                     });
                 }
             }
+            LoggerConfiguration?.Invoke(loggerConfiguration);
         });
     }
 
@@ -70,12 +76,17 @@ public static class SerilogAddInExtensions
     /// Use Serilog for logging in the API.
     /// </summary>
     /// <param name="apiBuilder">The <see cref="ApiBuilder"/> to add Serilog to.</param>
+    /// <param name="configure">An optional action to apply additional logger configuration.</param>
     /// <param name="debugOutput">An optional action to invoke with Serilog self-log messages.</param>
     /// <returns>The current builder.</returns>
-    public static ApiBuilder WithSerilog(this ApiBuilder apiBuilder, Action<string>? debugOutput = null)
+    public static ApiBuilder WithSerilog(
+        this ApiBuilder apiBuilder,
+        Action<LoggerConfiguration>? configure = null,
+        Action<string>? debugOutput = null)
     {
         apiBuilder.RegisterAddIn(new AddInSerilog
         {
+            LoggerConfiguration = configure,
             DebugOutput = debugOutput
         });
 

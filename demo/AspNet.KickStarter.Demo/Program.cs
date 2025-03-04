@@ -8,7 +8,10 @@ using Mapster;
 using System.Reflection;
 
 await new ApiBuilder()
-    .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}")) // Optional Serilog diagnostic self logging action
+    .WithSerilog(
+        // Optional serilog customizations
+        configure: config => config.Enrich.WithProperty("ProcessId", Environment.ProcessId),
+        debugOutput: msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger(title: "Demo API")
     .WithHealthHandler()
     .WithServices(RegisterServices)

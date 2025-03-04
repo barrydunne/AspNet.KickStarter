@@ -3,6 +3,7 @@ using AutoFixture;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Serilog;
 using Serilog.Core;
 using System.Reflection;
 
@@ -29,6 +30,22 @@ internal class AddInSerilogTests
     }
 
     [Test]
+    public void AddInSerilog_invokes_logger_configuration()
+    {
+        var serviceCollection = new ServiceCollection();
+        var builder = WebApplication.CreateBuilder(Array.Empty<string>());
+        builder.SetHostServices(serviceCollection);
+        var invoked = 0;
+        var sut = new AddInSerilog { LoggerConfiguration = (_) => invoked++ };
+
+        sut.Configure(builder, []);
+
+        using var provider = serviceCollection.BuildServiceProvider();
+        var logger = provider.GetService<global::Serilog.ILogger>() as ILogEventSink;
+        Assert.That(invoked, Is.GreaterThan(0));
+    }
+
+    [Test]
     public void WithSerilog_registers_add_in_with_default_properties()
     {
         var apiBuilder = new ApiBuilder();
@@ -43,12 +60,14 @@ internal class AddInSerilogTests
     public void WithSerilog_registers_add_in_with_custom_properties()
     {
         var apiBuilder = new ApiBuilder();
-        static void DebugOutput(string s) => throw new NotImplementedException();
+        static void LoggerConfiguration(LoggerConfiguration _) => throw new NotImplementedException();
+        static void DebugOutput(string _) => throw new NotImplementedException();
 
-        apiBuilder.WithSerilog(DebugOutput);
+        apiBuilder.WithSerilog(LoggerConfiguration, DebugOutput);
 
         var addin = apiBuilder.GetAddIn<AddInSerilog>();
 #pragma warning disable CS8974 // Converting method group to non-delegate type
+        Assert.That(apiBuilder.GetAddIn<AddInSerilog>()?.LoggerConfiguration, Is.EqualTo(LoggerConfiguration));
         Assert.That(apiBuilder.GetAddIn<AddInSerilog>()?.DebugOutput, Is.EqualTo(DebugOutput));
 #pragma warning restore CS8974 // Converting method group to non-delegate type
     }
